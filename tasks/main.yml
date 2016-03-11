@@ -1,0 +1,77 @@
+- name: Install ansible dependencies
+  apt: name={{ item }} state=present
+  with_items:
+    - python-apt
+
+- name: Debian stretch (Testing) für pacemaker
+  apt_repository: repo='deb http://ftp.de.debian.org/debian stretch main' state=present
+
+- name: "Don't use testing by default"
+  copy: src=preferences-testing dest=/etc/apt/preferences.d/
+
+- name: Install ha dependencies
+  # pacemaker-cli-utils ziehen aktuelles init system nach... nicht installieren!
+  apt: name={{ item }} state=present default_release=stretch install_recommends=no
+  with_items:
+    - pacemaker
+    - crmsh
+#    - libqb0
+#    - corosync
+#    - fence-agents
+
+# Corosync konfigurieren
+- name: Configure corosync
+  template: src=corosync.conf dest=/etc/corosync/
+
+# Generate authkey
+- name: Check if /etc/corosync/authkey exists
+  stat: path=/etc/corosync/authkey
+  register: authkey_stat
+  run_once: true
+
+- name: Generate authkey
+  shell: "corosync-keygen & sleep 1; while pgrep corosync-keygen; do dd if=/dev/urandom of=/tmp/100 bs=1024 count=100000; for i in {1..10}; do cp /tmp/100 /tmp/tmp_$i_$RANDOM; done; shred -u /tmp/tmp_* /tmp/100; done"
+  when: not authkey_stat.stat.exists
+  run_once: true
+
+- name: Create temporary copy of authkey
+  shell: |
+    cp -f /etc/corosync/authkey /tmp/authkey
+    chmod +r /tmp/authkey
+  when: not authkey_stat.stat.exists
+  run_once: true
+
+- name: Retrieve authkey
+  shell: |
+    scp {{ hostvars[groups['nodes'][0]]['ansible_ssh_host'] }}:/tmp/authkey tmp_authkey
+    chmod u+w tmp_authkey
+  sudo: no
+  delegate_to: 127.0.0.1
+  run_once: true
+  when: not authkey_stat.stat.exists
+
+- name: Remove temporary copy of authkey
+  file: path=/tmp/authkey state=absent
+  when: not authkey_stat.stat.exists
+  run_once: true
+
+- name: Deploy authkey
+  copy: src=tmp_authkey dest=/etc/corosync/authkey owner=root group=root mode=0400
+  when: inventory_hostname != "{{ groups['nodes'][0] }}" and not authkey_stat.stat.exists
+
+- name: Remove local copy of authkey
+  file: path=tmp_authkey state=absent
+  sudo: no
+  delegate_to: 127.0.0.1
+  run_once: true
+  when: not authkey_stat.stat.exists
+# END Generate authkey
+
+# Enable corosync
+- name: corosync enabled and started
+  service: name=corosync state=started enabled=yes
+
+# Enable pacemaker
+- name: pacemaker enabled and started
+  service: name=pacemaker state=started enabled=yes
+
