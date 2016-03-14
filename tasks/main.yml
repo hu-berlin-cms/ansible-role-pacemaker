@@ -87,3 +87,10 @@
 - name: pacemaker enabled and started
   service: name=pacemaker state=started enabled=yes
 
+# Configure pacemaker
+- name: Configure properties
+  pacemaker: resource="property {{ item }}"
+  with_items:
+    - "no-quorum-policy=freeze"
+    - "stonith-enabled=false"
+  run_once: yes
