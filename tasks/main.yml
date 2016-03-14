@@ -25,7 +25,7 @@
 #    - fence-agents
 
 - name: Install ha dependencies from mmopg ppa
-  apt: name={{ item }} state=present update_cache=yes
+  apt: name={{ item }} state=present update_cache=yes install_recommends=no
   with_items:
     - corosync
     - pacemaker
