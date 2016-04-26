@@ -3,29 +3,13 @@
   with_items:
     - python-apt
 
-- name: Repos Debian stretch (Testing) and ppa.mopg.com for pacemaker
+- name: Debian backports repo for pacemaker
   apt_repository: repo={{ item }} state=present
   with_items:
-    - 'deb http://ftp.de.debian.org/debian stretch main'
-    - 'deb http://ppa.mmogp.com/apt/debian jessie main'
+    - 'deb http://ftp.de.debian.org/debian jessie-backports main'
 
-- name: Install ppa.mmopg.com key
-  apt_key: url=http://ppa.mmogp.com/apt/debian/mmod.gpg.key state=present
-
-- name: "Don't use testing by default and prefer mmopg ppa"
-  copy: src={{ item }} dest=/etc/apt/preferences.d/
-  with_items:
-    - "preferences-testing"
-    - "preferences-mmogp"
-
-- name: Install ha dependencies from testing
-  apt: name={{ item }} state=present default_release=stretch update_cache=yes
-  with_items:
-    - libqb0
-#    - fence-agents
-
-- name: Install ha dependencies from mmopg ppa
-  apt: name={{ item }} state=present update_cache=yes install_recommends=no
+- name: Install ha dependencies from backports
+  apt: name={{ item }} state=present default_release=jessie-backports update_cache=yes install_recommends=no
   with_items:
     - corosync
     - pacemaker
