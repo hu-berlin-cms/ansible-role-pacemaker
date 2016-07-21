@@ -3,17 +3,10 @@
   with_items:
     - python-apt
 
-- name: Debian backports repo for pacemaker
-  apt_repository: repo={{ item }} state=present
-  with_items:
-    - 'deb http://ftp.de.debian.org/debian jessie-backports main'
-
-- name: Install ha dependencies from backports
-  apt: name={{ item }} state=present default_release=jessie-backports update_cache=yes install_recommends=no
-  with_items:
-    - corosync
-    - pacemaker
-    - crmsh
+- include: debian-jessie.yml
+  when: ansible_distribution == 'Debian' and ansible_distribution_release == 'jessie'
+- include: dependencies.yml
+  when: not (ansible_distribution == 'Debian' and ansible_distribution_release == 'jessie')
 
 # Corosync konfigurieren
 - name: Configure corosync
@@ -39,7 +32,7 @@
 
 - name: Retrieve authkey
   shell: |
-    scp {{ hostvars[groups['nodes'][0]]['ansible_ssh_host'] }}:/tmp/authkey tmp_authkey
+    scp {{ hostvars[groups[pm_group][0]]['ansible_ssh_host'] }}:/tmp/authkey tmp_authkey
     chmod u+w tmp_authkey
   sudo: no
   delegate_to: 127.0.0.1
@@ -53,7 +46,7 @@
 
 - name: Deploy authkey
   copy: src=tmp_authkey dest=/etc/corosync/authkey owner=root group=root mode=0400
-  when: inventory_hostname != "{{ groups['nodes'][0] }}" and not authkey_stat.stat.exists
+  when: inventory_hostname != "{{ groups[pm_group][0] }}" and not authkey_stat.stat.exists
 
 - name: Remove local copy of authkey
   file: path=tmp_authkey state=absent
@@ -74,7 +67,5 @@
 # Configure pacemaker
 - name: Configure properties
   pacemaker: resource="property {{ item }}"
-  with_items:
-    - "no-quorum-policy=freeze"
-    - "stonith-enabled=false"
+  with_items: "{{ pm_properties }}"
   run_once: yes
