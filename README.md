@@ -31,7 +31,7 @@ None.
 
     - hosts: loadbalancer
       roles:
-        - '{ role: "https://github.com/hu-berlin-cms/ansible-role-pacemaker.git", pm_groups: "loadbalancer", pm_properties: ["no-quorum-policy=freeze", "stonith-enabled=false"] }'
+        - { role: ansible-role-pacemaker, pm_groups: "loadbalancer", pm_properties: ["no-quorum-policy=freeze", "stonith-enabled=false"] }
 
 ## License
 
