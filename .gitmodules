@@ -1,0 +1,3 @@
+[submodule "library_repos/ansible-pacemaker"]
+	path = library_repos/ansible-pacemaker
+	url = https://github.com/egroeper/ansible-pacemaker.git
