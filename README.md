@@ -8,7 +8,7 @@ An Ansible Role that installs corosync and pacemaker on Debian/Ubuntu.
 
 ## Requirements
 
-This role requires the [pacemaker ansible module](https://github.com/egroeper/ansible-pacemaker).
+This role requires the [ansible-pacemaker module](https://github.com/egroeper/ansible-pacemaker), which is bundled with the role.
 
 ## Role Variables
 
