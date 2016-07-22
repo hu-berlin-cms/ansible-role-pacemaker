@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  author: "Enno Gröper"
+  company: "Humboldt-Universität zu Berlin"
+  license: MIT / BSD
+  min_ansible_version: 1.7
+  platforms:
+   - name: Debian
+     versions:
+      - jessie
+   - name: Ubuntu
+     versions:
+      - trusty
+      - xenial
+dependencies: []
