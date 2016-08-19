@@ -8,9 +8,10 @@
 - include: dependencies.yml
   when: not (ansible_distribution == 'Debian' and ansible_distribution_release == 'jessie')
 
-# Corosync konfigurieren
+# Configure corosync
 - name: Configure corosync
   template: src=corosync.conf dest=/etc/corosync/
+  notify: corosync-restart
 
 # Generate authkey
 - name: Check if /etc/corosync/authkey exists
@@ -59,6 +60,9 @@
 # Enable corosync
 - name: corosync enabled and started
   service: name=corosync state=started enabled=yes
+
+# Make sure corosync has current config (otherwise next tasks may fail)
+- meta: flush_handlers
 
 # Enable pacemaker
 - name: pacemaker enabled and started

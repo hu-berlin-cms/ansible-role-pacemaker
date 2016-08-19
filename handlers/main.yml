@@ -1,0 +1,3 @@
+- name: corosync-restart
+  service: name=corosync state=restarted
+  sudo: yes
