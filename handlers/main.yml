@@ -1,3 +1,5 @@
 - name: corosync-restart
   service: name=corosync state=restarted
   sudo: yes
+- name: corosync-pause
+  pause: seconds=10 prompt="Waiting for corosync changes to take effect"

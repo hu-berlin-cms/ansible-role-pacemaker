@@ -11,7 +11,9 @@
 # Configure corosync
 - name: Configure corosync
   template: src=corosync.conf dest=/etc/corosync/
-  notify: corosync-restart
+  notify:
+    - corosync-restart
+    - corosync-pause
 
 # Generate authkey
 - name: Check if /etc/corosync/authkey exists
