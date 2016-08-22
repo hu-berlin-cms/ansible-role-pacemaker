@@ -1,2 +1,7 @@
 pm_group: 'nodes'
 pm_properties: []
+
+cs_cluster_name: my-corosync-cluster
+cs_ringnumber: 0
+cs_bindnetaddr: {{ ansible_default_ipv4.address }}
+cs_mcastport: 5407
