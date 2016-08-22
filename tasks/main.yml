@@ -67,6 +67,11 @@
 # Enable pacemaker
 - name: pacemaker enabled and started
   service: name=pacemaker state=started enabled=yes
+  register: pm_restart
+
+# Wait for pacemaker to come up and elect a dc
+- pause: seconds=40
+  when: pm_restart.changed
 
 # Configure pacemaker
 - name: Configure properties
