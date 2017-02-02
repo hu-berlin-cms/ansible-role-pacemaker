@@ -31,11 +31,12 @@
   when: not authkey_stat.stat.exists
   run_once: true
 
+#FIXME - use fetch module?
 - name: Retrieve authkey
   shell: |
     scp {{ hostvars[groups[pm_group][0]]['ansible_ssh_host'] }}:/tmp/authkey tmp_authkey
     chmod u+w tmp_authkey
-  sudo: no
+  become: no
   delegate_to: 127.0.0.1
   run_once: true
   when: not authkey_stat.stat.exists
@@ -51,7 +52,7 @@
 
 - name: Remove local copy of authkey
   file: path=tmp_authkey state=absent
-  sudo: no
+  become: no
   delegate_to: 127.0.0.1
   run_once: true
   when: not authkey_stat.stat.exists
