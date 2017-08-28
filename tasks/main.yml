@@ -48,7 +48,7 @@
 
 - name: Deploy authkey
   copy: src=tmp_authkey dest=/etc/corosync/authkey owner=root group=root mode=0400
-  when: inventory_hostname != "{{ groups[pm_group][0] }}" and not authkey_stat.stat.exists
+  when: inventory_hostname != groups[pm_group][0] and not authkey_stat.stat.exists
 
 - name: Remove local copy of authkey
   file: path=tmp_authkey state=absent
