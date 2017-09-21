@@ -34,7 +34,7 @@
 #FIXME - use fetch module?
 - name: Retrieve authkey
   shell: |
-    scp {{ hostvars[groups[pm_group][0]]['ansible_ssh_host'] }}:/tmp/authkey tmp_authkey
+    scp {{ hostvars[groups[pm_group][0]]['ansible_host'] }}:/tmp/authkey tmp_authkey
     chmod u+w tmp_authkey
   become: no
   delegate_to: 127.0.0.1
