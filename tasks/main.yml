@@ -72,7 +72,7 @@
 
 # Wait for pacemaker to come up and elect a dc
 - pause: seconds=40
-  when: pm_restart.changed
+  when: (not authkey_stat.stat.exists) or pm_restart.changed
 
 # Configure pacemaker
 - name: Configure properties
