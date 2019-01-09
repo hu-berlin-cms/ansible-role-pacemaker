@@ -1,7 +1,5 @@
 - name: Install ansible dependencies
-  apt: name={{ item }} state=present
-  with_items:
-    - python-apt
+  apt: name=python-apt state=present
 
 - include: debian-jessie.yml
   when: ansible_distribution == 'Debian' and ansible_distribution_release == 'jessie'

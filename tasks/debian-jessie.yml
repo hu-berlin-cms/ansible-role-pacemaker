@@ -4,8 +4,9 @@
     - 'deb http://ftp.de.debian.org/debian jessie-backports main'
 
 - name: Install ha dependencies from backports
-  apt: name={{ item }} state=present default_release=jessie-backports update_cache=yes install_recommends=no
-  with_items:
-    - corosync
-    - pacemaker
-    - crmsh
+  apt: name={{ packages }} state=present default_release=jessie-backports update_cache=yes install_recommends=no
+  vars:
+    packages:
+      - corosync
+      - pacemaker
+      - crmsh
