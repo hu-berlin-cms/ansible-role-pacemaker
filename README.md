@@ -4,7 +4,7 @@ An Ansible Role that installs corosync and pacemaker on Debian/Ubuntu.
 
 ## Minimum Ansible Version
 
-1.7
+2.5
 
 ## Requirements
 
